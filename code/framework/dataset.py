@@ -44,15 +44,16 @@ def create_dataset(
 ):
     # Open all images
     images = collect_images_from_path(data_path)
+    num_images = len(images)
 
     # Create a generator that crop images
-    input_groudtruth_generator = create_input_groudtruth_generator(
+    images = create_input_groudtruth_generator(
         images, crop_function
     )
 
     # Create a tensorflow dataset
     dataset = tf.data.Dataset.from_generator(
-        input_groudtruth_generator,
+        images,
         (tf.float32, tf.float32),
         output_shapes=(
             tf.TensorShape(input_shape), 
@@ -62,7 +63,6 @@ def create_dataset(
 
     # Shuffle and batch if needed
     if shuffle:
-        num_images = len(images)
         dataset = dataset.shuffle(num_images)
 
     if batch_size:
